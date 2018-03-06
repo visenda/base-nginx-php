@@ -1,65 +1,34 @@
-![docker hub](https://img.shields.io/docker/pulls/richarvey/nginx-php-fpm.svg?style=flat-square)
-![docker hub](https://img.shields.io/docker/stars/richarvey/nginx-php-fpm.svg?style=flat-square)
-
 ## Overview
-This is a Dockerfile/image to build a container for nginx and php-fpm, with the ability to pull website code from git when the container is created, as well as allowing the container to push and pull changes to the code to and from git. The container also has the ability to update templated files with variables passed to docker in order to update your code and settings. There is support for lets encrypt SSL configurations, custom nginx configs, core nginx/PHP variable overrides for running preferences, X-Forwarded-For headers and UID mapping for local volume support.
+This is a minimalistic, production ready, performance first Docker PHP webserver, realized with Nginx 1.13.7 and PHP 7.1.12. It's basically a boilerplate for our other, more specialized Docker images, but can be used for any PHP project ootb. 
 
-If you have improvements or suggestions please open an issue or pull request on the GitHub project page.
-
-### Versioning
-| Docker Tag | GitHub Release | Nginx Version | PHP Version | Alpine Version |
-|-----|-------|-----|--------|--------|
-| latest | Master Branch |1.13.7 | 7.1.12 | 3.4 |
-
-For other tags please see: [versioning](https://github.com/richarvey/nginx-php-fpm/blob/master/docs/versioning.md)
-
-### Links
-- [https://github.com/richarvey/nginx-php-fpm](https://github.com/richarvey/nginx-php-fpm)
-- [https://registry.hub.docker.com/u/richarvey/nginx-php-fpm/](https://registry.hub.docker.com/u/richarvey/nginx-php-fpm/)
+Thankfully forked from [richarvey/nginx-php-fpm](https://github.com/richarvey/nginx-php-fpm).
 
 ## Quick Start
-To pull from docker hub:
+#### To pull from docker hub:
 ```
-docker pull richarvey/nginx-php-fpm:latest
+docker pull visenda/php-webserver:latest
 ```
-### Running
-To simply run the container:
+#### Running
+By just running the container, it will show you a php_info page:
 ```
-sudo docker run -d richarvey/nginx-php-fpm
-```
-To dynamically pull code from git when starting:
-```
-docker run -d -e 'GIT_EMAIL=email_address' -e 'GIT_NAME=full_name' -e 'GIT_USERNAME=git_username' -e 'GIT_REPO=github.com/project' -e 'GIT_PERSONAL_TOKEN=<long_token_string_here>' richarvey/nginx-php-fpm:latest
+docker run -d -p 80:80 --name php-project visenda/php-webserver
 ```
 
-You can then browse to ```http://<DOCKER_HOST>``` to view the default install files. To find your ```DOCKER_HOST``` use the ```docker inspect``` to get the IP address (normally 172.17.0.2)
+You can easily attach your local project dir to /var/www/html, to be able to see your project:
+```
+docker run -d -p 80:80 --name php-project -v /Users/.../shop-project:/var/www/html visenda/php-webserver
+```
+Hint: The nginx user has uid 1000 and gid 1001, so make sure that your project files are executable. 
 
-For more detailed examples and explanations please refer to the documentation.
-## Documentation
+Now browse to ```http://<DOCKER_HOST>``` to see your project.
 
-- [Building from source](https://github.com/richarvey/nginx-php-fpm/blob/master/docs/building.md)
-- [Versioning](https://github.com/richarvey/nginx-php-fpm/blob/master/docs/versioning.md)
-- [Config Flags](https://github.com/richarvey/nginx-php-fpm/blob/master/docs/config_flags.md)
-- [Git Auth](https://github.com/richarvey/nginx-php-fpm/blob/master/docs/git_auth.md)
- - [Personal Access token](https://github.com/richarvey/nginx-php-fpm/blob/master/docs/git_auth.md#personal-access-token)
- - [SSH Keys](https://github.com/richarvey/nginx-php-fpm/blob/master/docs/git_auth.md#ssh-keys)
-- [Git Commands](https://github.com/richarvey/nginx-php-fpm/blob/master/docs/git_commands.md)
- - [Push](https://github.com/richarvey/nginx-php-fpm/blob/master/docs/git_commands.md#push-code-to-git)
- - [Pull](https://github.com/richarvey/nginx-php-fpm/blob/master/docs/git_commands.md#pull-code-from-git-refresh)
-- [Repository layout / webroot](https://github.com/richarvey/nginx-php-fpm/blob/master/docs/repo_layout.md)
- - [webroot](https://github.com/richarvey/nginx-php-fpm/blob/master/docs/repo_layout.md#src--webroot)
-- [User / Group Identifiers](https://github.com/richarvey/nginx-php-fpm/blob/master/docs/UID_GID_Mapping.md)
-- [Custom Nginx Config files](https://github.com/richarvey/nginx-php-fpm/blob/master/docs/nginx_configs.md)
- - [REAL IP / X-Forwarded-For Headers](https://github.com/richarvey/nginx-php-fpm/blob/master/docs/nginx_configs.md#real-ip--x-forwarded-for-headers)
-- [Scripting and Templating](https://github.com/richarvey/nginx-php-fpm/blob/master/docs/scripting_templating.md)
- - [Environment Variables](https://github.com/richarvey/nginx-php-fpm/blob/master/docs/scripting_templating.md#using-environment-variables--templating)
-- [Lets Encrypt Support](https://github.com/richarvey/nginx-php-fpm/blob/master/docs/lets_encrypt.md)
- - [Setup](https://github.com/richarvey/nginx-php-fpm/blob/master/docs/lets_encrypt.md#setup)
- - [Renewal](https://github.com/richarvey/nginx-php-fpm/blob/master/docs/lets_encrypt.md#renewal)
-- [PHP Modules](https://github.com/richarvey/nginx-php-fpm/blob/master/docs/php_modules.md)
-- [Xdebug](https://github.com/richarvey/nginx-php-fpm/blob/master/docs/xdebug.md)
-- [Logging and Errors](https://github.com/richarvey/nginx-php-fpm/blob/master/docs/logs.md)
+## Extending
+As already said, this is a boilerplate image. It provides basic php extensions (see Dockerfile) and is meant to be extended with more special settings/configs/extensions.
 
-## Guides
-- [Running in Kubernetes](https://github.com/richarvey/nginx-php-fpm/blob/master/docs/guides/kubernetes.md)
-- [Using Docker Compose](https://github.com/richarvey/nginx-php-fpm/blob/master/docs/guides/docker_compose.md)
+To do so, follow this steps:
+
+- Create a Dockerfile ```FROM visenda/php-webserver:latest```
+- Use ```RUN apk add --no-cache dep1 dep2 dep3...``` to install dependencies
+- Use ```RUN docker-php-ext-install mysqli ...``` to install PHP extensions
+- Feel free to customize the webserver for your app
+- Build

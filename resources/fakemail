@@ -1,0 +1,20 @@
+#!/usr/bin/php
+
+<?php
+	$logfile = '/data/www/ap/sent-mail.htm';
+	//* Get the email content
+	$log_output = "<p>****" . date('Y-m-d H:i:s') . "****</p>rn";
+	$handle = fopen('php://stdin', 'r');
+	$count = 0;
+	while(!feof($handle))
+	{
+		$count++;
+		$buffer = trim(fgets($handle));
+		if ($count <= 12) # Output header information
+			$log_output .= $count . ": " . $buffer . "<br>rn";
+		else # Output body
+			$log_output .= $buffer . "rn";
+	}
+	//* Write the log
+	file_put_contents($logfile, $log_output, FILE_APPEND);
+?>
