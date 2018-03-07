@@ -41,7 +41,6 @@ pm.max_spare_servers = $PHP_FPM_PM_MAX_SPARE_SERVERS
 pm.max_requests = $PHP_FPM_PM_MAX_REQUESTS
 " > /usr/local/etc/php-fpm.conf
 
-# generate smtp config if production
 echo "Generating SMTP config ..."
 printf "\
 account        default

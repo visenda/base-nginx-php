@@ -33,20 +33,9 @@ ENV APP_ENV="dev" \
 
     # DB
     RDS_HOSTNAME="db" \
-    RDS_DB_NAME="magento" \
-    RDS_USERNAME="magento" \
-    RDS_PASSWORD="magento" \
-
-    # S3 MEDIA
-    MEDIA_S3_ACCESS_KEY="" \
-    MEDIA_S3_SECRET_KEY="" \
-    MEDIA_S3_BUCKET="" \
-    MEDIA_S3_REGION="eu-central-1" \
-
-    # REDIS
-    REDIS_HOSTNAME="redis" \
-    REDIS_PORT="6379" \
-    REDIS_PASSWORD="" \
+    RDS_DB_NAME="" \
+    RDS_USERNAME="" \
+    RDS_PASSWORD="" \
 
     # BUILD VARS
     LUA_MODULE_VERSION="0.10.11" \
