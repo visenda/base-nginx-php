@@ -3,17 +3,17 @@ FROM php:7.1.12-fpm-alpine
 MAINTAINER Adis Heric <adis.heric@visenda.com>
 
 ENV APP_ENV="dev" \
-
+    \
     # NGINX
     NGINX_VERSION="1.13.7" \
     PROXY_FORWARD_HTTPS="0" \
-
+    \
     # PHP
     PHP_MEMORY_LIMIT="512M" \
     PHP_MAX_EXEC_TIME="18000" \
     PHP_UPLOAD_MAX_FILESIZE="256M" \
     PHP_POST_MAX_SIZE="256M" \
-
+    \
     # PHP-FPM
     PHP_FPM_PM="dynamic" \
     PHP_FPM_PM_MAX_CHILDREN="10" \
@@ -21,7 +21,7 @@ ENV APP_ENV="dev" \
     PHP_FPM_PM_START_SERVERS="4" \
     PHP_FPM_PM_MIN_SPARE_SERVERS="2" \
     PHP_FPM_PM_MAX_SPARE_SERVERS="6" \
-
+    \
     # SMTP
     SMTP_HOSTNAME="" \
     SMTP_PORT="587" \
@@ -30,13 +30,13 @@ ENV APP_ENV="dev" \
     SMTP_PASSWORD="" \
     SMTP_AUTH="1" \
     SMTP_TLS="1" \
-
+    \
     # DB
     RDS_HOSTNAME="db" \
     RDS_DB_NAME="" \
     RDS_USERNAME="" \
     RDS_PASSWORD="" \
-
+    \
     # BUILD VARS
     LUA_MODULE_VERSION="0.10.11" \
     DEVEL_KIT_MODULE_VERSION="0.3.0" \
@@ -269,8 +269,9 @@ COPY scripts/ /scripts/
 RUN chmod +x /scripts/* /usr/local/bin/*
 
 # copy source code and let nginx own
-COPY --chown=1000:1001 src/ /var/www/html/
-RUN chmod -R 775 /var/www/html/
+COPY src/ /var/www/html/
+RUN chown -R 1000:1001 /var/www/html/ \
+    && chmod -R 775 /var/www/html/
 
 # 443 not used initially but can be configured
 EXPOSE 80 443
