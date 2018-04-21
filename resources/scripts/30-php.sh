@@ -20,7 +20,7 @@ opcache.revalidate_freq = 0
 " > /usr/local/etc/php/php.ini
 
 # env dependent settings
-if [ $APP_ENV == "prod" ]; then
+if [[ $APP_ENV == "prod" ]]; then
 printf "\
 sendmail_path = /usr/bin/msmtp -t
 display_errors = Off

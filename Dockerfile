@@ -2,13 +2,16 @@ FROM php:7.1.12-fpm-alpine
 
 MAINTAINER Adis Heric <adis.heric@visenda.com>
 
-ENV APP_ENV="dev" \
-    APP_TIMEZONE="Europe/Berlin" \
-    \
+ENV \
     # NGINX
     NGINX_VERSION="1.13.7" \
     NGINX_WEBROOT="/var/www/html" \
     NGINX_PROXY_FORWARD_HTTPS="0" \
+    \
+    # APP
+    APP_ENV="dev" \
+    APP_TIMEZONE="Europe/Berlin" \
+    APP_FAKEMAIL_DIR="${NGINX_WEBROOT}/fakemail" \
     \
     # SCRIPTS DIRS
     SCRIPTS_DIR="/scripts" \

@@ -8,8 +8,14 @@ port           $SMTP_PORT
 from           $SMTP_FROM
 user           $SMTP_USERNAME
 password       $SMTP_PASSWORD
-auth           $([ $SMTP_AUTH == 1 ] && echo "on" || echo "off")
-tls            $([ $SMTP_TLS == 1 ] && echo "on" || echo "off")
+auth           $([[ $SMTP_AUTH == 1 ]] && echo "on" || echo "off")
+tls            $([[ $SMTP_TLS == 1 ]] && echo "on" || echo "off")
 tls_trust_file /etc/ssl/certs/ca-certificates.crt
 logfile        /proc/self/fd/1
 " > /etc/msmtprc
+
+# create fakemail dir if dev env
+if [[ $APP_ENV != "prod" ]]; then
+    mkdir -p $APP_FAKEMAIL_DIR;
+    chmod 777 $APP_FAKEMAIL_DIR;
+fi

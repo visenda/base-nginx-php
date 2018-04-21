@@ -1,6 +1,6 @@
 #!/bin/bash
 
-for script in /scripts/*
+for script in $SCRIPTS_DIR/*
 do
   bash $script
 done

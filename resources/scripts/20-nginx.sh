@@ -13,7 +13,7 @@ http {
     include mime.types;
     default_type application/octet-stream;
 
-    $([ $NGINX_PROXY_FORWARD_HTTPS == 1 ] && echo "\
+    $([[ $NGINX_PROXY_FORWARD_HTTPS == 1 ]] && echo "\
     # Log the real ip instead of docker network ip
     log_format  main  '\$remote_addr - \$remote_user [\$time_local] \"\$request\" '
                       '\$status \$body_bytes_sent \"\$http_referer\" '
@@ -34,7 +34,7 @@ http {
         listen 80;
         server_name _;
 
-    $([ $NGINX_PROXY_FORWARD_HTTPS == 1 ] && echo "\
+    $([[ $NGINX_PROXY_FORWARD_HTTPS == 1 ]] && echo "\
         # Redirect to https if behind proxy
         if (\$http_x_forwarded_proto != 'https') {
             return 301 https://\$host\$request_uri;
