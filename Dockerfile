@@ -3,12 +3,14 @@ FROM php:7.1.12-fpm-alpine
 MAINTAINER Adis Heric <adis.heric@visenda.com>
 
 ENV APP_ENV="dev" \
-    SCRIPTS_DIR="/scripts" \
     \
     # NGINX
     NGINX_VERSION="1.13.7" \
     NGINX_WEBROOT="/var/www/html" \
     NGINX_PROXY_FORWARD_HTTPS="0" \
+    # SCRIPTS DIRS
+    SCRIPTS_DIR="/scripts" \
+    CUSTOM_SCRIPTS_DIR="$NGINX_WEBROOT/webserver-scripts" \
     \
     # PHP
     PHP_MEMORY_LIMIT="256M" \
