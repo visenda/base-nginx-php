@@ -3,14 +3,16 @@ FROM php:7.1.12-fpm-alpine
 MAINTAINER Adis Heric <adis.heric@visenda.com>
 
 ENV APP_ENV="dev" \
+    SCRIPTS_DIR="/scripts" \
     \
     # NGINX
     NGINX_VERSION="1.13.7" \
-    PROXY_FORWARD_HTTPS="0" \
+    NGINX_WEBROOT="/var/www/html" \
+    NGINX_PROXY_FORWARD_HTTPS="0" \
     \
     # PHP
-    PHP_MEMORY_LIMIT="512M" \
-    PHP_MAX_EXEC_TIME="18000" \
+    PHP_MEMORY_LIMIT="256M" \
+    PHP_MAX_EXEC_TIME="60" \
     PHP_UPLOAD_MAX_FILESIZE="256M" \
     PHP_POST_MAX_SIZE="256M" \
     \
@@ -23,26 +25,26 @@ ENV APP_ENV="dev" \
     PHP_FPM_PM_MAX_SPARE_SERVERS="6" \
     \
     # SMTP
-    SMTP_HOSTNAME="" \
+    SMTP_HOSTNAME="smtp" \
     SMTP_PORT="587" \
-    SMTP_FROM="" \
-    SMTP_USERNAME="" \
-    SMTP_PASSWORD="" \
+    SMTP_FROM="it@visenda.com" \
+    SMTP_USERNAME="visenda" \
+    SMTP_PASSWORD="visenda" \
     SMTP_AUTH="1" \
     SMTP_TLS="1" \
     \
     # DB
     RDS_HOSTNAME="db" \
-    RDS_DB_NAME="" \
-    RDS_USERNAME="" \
-    RDS_PASSWORD="" \
+    RDS_DB_NAME="visenda" \
+    RDS_USERNAME="visenda" \
+    RDS_PASSWORD="visenda" \
     \
     # BUILD VARS
     LUA_MODULE_VERSION="0.10.11" \
     DEVEL_KIT_MODULE_VERSION="0.3.0" \
     LUAJIT_LIB="/usr/lib" \
     LUAJIT_INC="/usr/include/luajit-2.0" \
-    # resolves #166
+    # resolves #166 \
     LD_PRELOAD="/usr/lib/preloadable_libiconv.so php"
 
 RUN echo "@testing http://nl.alpinelinux.org/alpine/edge/testing" >> /etc/apk/repositories \
@@ -244,36 +246,31 @@ RUN apk add --no-cache \
     # flush build-deps - not needed anymore
     && apk del .build-deps
 
-# copy static supervisor config
-COPY conf/supervisord.conf /etc/supervisord.conf
+# install resources
+COPY resources/entrypoint.sh /entrypoint.sh
+COPY resources/bin/* /usr/local/bin/
+COPY resources/scripts/ $SCRIPTS_DIR
+RUN chmod +x \
+    $SCRIPTS_DIR/* \
+    /usr/local/bin/* \
+    /entrypoint.sh
 
 # prepare nginx
 RUN mkdir -p \
     /etc/nginx/sites-available/ \
     /etc/nginx/sites-enabled/ \
     /etc/nginx/ssl/ \
-&& rm -Rf /var/www/* \
-&& mkdir /var/www/html/ \
-# let nginx own
-&& chown -R 1000:1001 /var/www/html/
+    && rm -Rf /var/www/* \
+    && mkdir -p $NGINX_WEBROOT \
+    # let nginx own
+    && chown -R 1000:1001 $NGINX_WEBROOT
 
-# copy additional resources
-COPY resources/* /usr/local/bin/
-
-# create dir for scripts and copy them
-RUN mkdir /scripts \
-    && chmod -R +x /scripts
-COPY scripts/ /scripts/
-
-# give resources + scripts permissions
-RUN chmod +x /scripts/* /usr/local/bin/*
-
-# copy source code and let nginx own
-COPY src/ /var/www/html/
-RUN chown -R 1000:1001 /var/www/html/ \
-    && chmod -R 775 /var/www/html/
+# install source files
+COPY src/ $NGINX_WEBROOT
+RUN chown -R 1000:1001 $NGINX_WEBROOT \
+    && chmod -R 775 $NGINX_WEBROOT
 
 # 443 not used initially but can be configured
 EXPOSE 80 443
 
-CMD ["/scripts/start.sh"]
+CMD ["/entrypoint.sh"]
