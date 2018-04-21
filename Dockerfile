@@ -3,14 +3,16 @@ FROM php:7.1.12-fpm-alpine
 MAINTAINER Adis Heric <adis.heric@visenda.com>
 
 ENV APP_ENV="dev" \
+    APP_TIMEZONE="Europe/Berlin" \
     \
     # NGINX
     NGINX_VERSION="1.13.7" \
     NGINX_WEBROOT="/var/www/html" \
     NGINX_PROXY_FORWARD_HTTPS="0" \
+    \
     # SCRIPTS DIRS
     SCRIPTS_DIR="/scripts" \
-    CUSTOM_SCRIPTS_DIR="$NGINX_WEBROOT/webserver-scripts" \
+    CUSTOM_SCRIPTS_DIR="${NGINX_WEBROOT}/webserver-scripts" \
     \
     # PHP
     PHP_MEMORY_LIMIT="256M" \
@@ -263,16 +265,14 @@ RUN mkdir -p \
     /etc/nginx/sites-enabled/ \
     /etc/nginx/ssl/ \
     && rm -Rf /var/www/* \
-    && mkdir -p $NGINX_WEBROOT \
-    # let nginx own
-    && chown -R 1000:1001 $NGINX_WEBROOT
+    && mkdir -p $NGINX_WEBROOT
 
 # install source files
 COPY src/ $NGINX_WEBROOT
 RUN chown -R 1000:1001 $NGINX_WEBROOT \
     && chmod -R 775 $NGINX_WEBROOT
 
-# 443 not used initially but can be configured
+# 443 not used initially but configurable via custom scripts
 EXPOSE 80 443
 
 CMD ["/entrypoint.sh"]
