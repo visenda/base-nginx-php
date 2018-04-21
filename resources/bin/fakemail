@@ -1,8 +1,8 @@
-#!/usr/bin/php
+#!/usr/local/bin/php
 
 <?php
-	$logfile = '/data/www/ap/sent-mail.htm';
-	//* Get the email content
+	$logfile = getenv('APP_FAKEMAIL_DIR').'/index.html';
+	// get the email content
 	$log_output = "<p>****" . date('Y-m-d H:i:s') . "****</p>rn";
 	$handle = fopen('php://stdin', 'r');
 	$count = 0;
@@ -15,6 +15,6 @@
 		else # Output body
 			$log_output .= $buffer . "rn";
 	}
-	//* Write the log
+	// write the log
 	file_put_contents($logfile, $log_output, FILE_APPEND);
 ?>
