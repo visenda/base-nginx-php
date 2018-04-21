@@ -1,7 +1,7 @@
 #!/usr/local/bin/php
 
 <?php
-	$logfile = getenv('APP_FAKEMAIL_DIR').'/index.html';
+	$logfile = getenv('NGINX_WEBROOT').'/'.getenv('APP_FAKEMAIL_DIR').'/index.html';
 	// get the email content
 	$log_output = "<p>****" . date('Y-m-d H:i:s') . "****</p>rn";
 	$handle = fopen('php://stdin', 'r');

@@ -11,11 +11,11 @@ ENV \
     # APP
     APP_ENV="dev" \
     APP_TIMEZONE="Europe/Berlin" \
-    APP_FAKEMAIL_DIR="${NGINX_WEBROOT}/fakemail" \
+    APP_FAKEMAIL_DIR="/fakemail" \
     \
     # SCRIPTS DIRS
     SCRIPTS_DIR="/scripts" \
-    CUSTOM_SCRIPTS_DIR="${NGINX_WEBROOT}/webserver-scripts" \
+    CUSTOM_SCRIPTS_DIR="/webserver-scripts" \
     \
     # PHP
     PHP_MEMORY_LIMIT="256M" \
