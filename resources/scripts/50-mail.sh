@@ -14,8 +14,9 @@ tls_trust_file /etc/ssl/certs/ca-certificates.crt
 logfile        /proc/self/fd/1
 " > /etc/msmtprc
 
-# create fakemail dir if dev env
+# prepare fakemail dir if dev env
 if [[ $APP_ENV != "prod" ]]; then
-    mkdir -p $APP_FAKEMAIL_DIR;
-    chmod 777 $APP_FAKEMAIL_DIR;
+    mkdir -p $NGINX_WEBROOT/$APP_FAKEMAIL_DIR
+    touch $NGINX_WEBROOT/$APP_FAKEMAIL_DIR/index.html
+    chmod -R 777 $APP_FAKEMAIL_DIR
 fi
